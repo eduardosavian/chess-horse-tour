@@ -1,4 +1,4 @@
-# horse-chess-search-algorithm
+# Horse chess search algorithm
 
 ## Description
 
