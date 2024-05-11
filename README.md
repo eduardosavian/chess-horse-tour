@@ -14,8 +14,8 @@ OBS.: É obrigatório a entrega de uma versão executavel (que possa ser executa
 
 Exemplo de saida do programa:
 
-[![Horse moved](images/horse_moved.jpeg)]
+![Horse moved](images/horse_moved.jpeg)
 
 Exemplo de movimentação do cavalo no Xadrez:
 
-[![Horse movement](images/horse_movement.jpeg)]
+![Horse movement](images/horse_movement.jpeg)
