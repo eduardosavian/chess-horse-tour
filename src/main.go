@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -136,14 +137,16 @@ func backtrack(board [][]int, moveNum, x, y, boardSize int) bool {
 	return false
 }
 
-func printBoard(tour [][]int) {
-	fmt.Println("Knight's Tour:")
-	for _, row := range tour {
-		for _, value := range row {
-			fmt.Printf("%3d ", value)
-		}
-		fmt.Println()
+func convertBoardToJSON(board [][]int) ([]byte, error) {
+	type Board struct {
+		Rows [][]int `json:"board"`
 	}
+
+	data := Board{
+		Rows: board,
+	}
+
+	return json.MarshalIndent(data, "", "  ")
 }
 
 func main() {
@@ -164,7 +167,11 @@ func main() {
 	}()
 
 	for tour := range foundTour {
-		printBoard(tour)
+		if jsonBytes, err := convertBoardToJSON(tour); err == nil {
+			fmt.Println(string(jsonBytes))
+		} else {
+			fmt.Println("Error converting board to JSON:", err)
+		}
 		return
 	}
 
