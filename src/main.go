@@ -6,20 +6,21 @@ import (
 	"os"
 	"strconv"
 	"sync"
-	"time"
 )
 
 var (
-	foundTour   = make(chan [][]int)
-	waitGroup   sync.WaitGroup
+	foundTour  = make(chan [][]int)
+	stopSearch = make(chan struct{})
+	waitGroup  sync.WaitGroup
+	boardMutex sync.Mutex
 )
 
 func validateInput(args []string) (int, int, int, int, error) {
-	usageMsg    := "Usage: go run main.go <startX> <startY> [<numberThreads> <boardSize>]"
+	usageMsg := "Usage: go run main.go <startX> <startY> [<numberThreads> <boardSize>]"
 	rangeErrMsg := "Invalid argument. Must be an integer between 0 and %d"
 
 	defaultConcurrency := 4
-	defaultBoardSize   := 8
+	defaultBoardSize := 8
 
 	if len(args) < 3 || len(args) > 5 {
 		return 0, 0, 0, 0, fmt.Errorf("invalid number of arguments. %s", usageMsg)
@@ -78,10 +79,74 @@ func findNextMoves(x, y, boardSize int) [][]int {
 	return validMoves
 }
 
+func tourWorker(startX, startY, boardSize int) {
+	defer waitGroup.Done()
+
+	board := make([][]int, boardSize)
+	for i := range board {
+		board[i] = make([]int, boardSize)
+	}
+
+	boardMutex.Lock()
+	board[startX][startY] = 1
+	boardMutex.Unlock()
+
+	if backtrack(board, 1, startX, startY, boardSize) {
+		select {
+		case foundTour <- board:
+			close(stopSearch)
+		default:
+		}
+	}
+}
+
+func backtrack(board [][]int, moveNum, x, y, boardSize int) bool {
+	if moveNum == boardSize*boardSize {
+		return true
+	}
+
+	select {
+	case <-stopSearch:
+		return false
+	default:
+	}
+
+	nextMoves := findNextMoves(x, y, boardSize)
+	rand.Shuffle(len(nextMoves), func(i, j int) {
+		nextMoves[i], nextMoves[j] = nextMoves[j], nextMoves[i]
+	})
+
+	for _, move := range nextMoves {
+		nextX, nextY := move[0], move[1]
+		if board[nextX][nextY] == 0 {
+			boardMutex.Lock()
+			board[nextX][nextY] = moveNum + 1
+			boardMutex.Unlock()
+
+			if backtrack(board, moveNum+1, nextX, nextY, boardSize) {
+				return true
+			}
+
+			boardMutex.Lock()
+			board[nextX][nextY] = 0
+			boardMutex.Unlock()
+		}
+	}
+
+	return false
+}
+
+func printBoard(tour [][]int) {
+	fmt.Println("Knight's Tour:")
+	for _, row := range tour {
+		for _, value := range row {
+			fmt.Printf("%3d ", value)
+		}
+		fmt.Println()
+	}
+}
 
 func main() {
-	fmt.Println("Hello, world")
-
 	startX, startY, concurrency, boardSize, err := validateInput(os.Args)
 	if err != nil {
 		fmt.Println(err)
@@ -99,13 +164,7 @@ func main() {
 	}()
 
 	for tour := range foundTour {
-		fmt.Println("Found Knight's Tour:")
-		for _, row := range tour {
-			for _, value := range row {
-				fmt.Printf("%3d ", value)
-			}
-			fmt.Println()
-		}
+		printBoard(tour)
 		return
 	}
 
