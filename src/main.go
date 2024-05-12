@@ -60,6 +60,7 @@ func validateInput(args []string) (int, int, int, int, error) {
 }
 
 func main() {
+	gui()
 	startX, startY, concurrency, boardSize, err := validateInput(os.Args)
 	if err != nil {
 		fmt.Println(err)
