@@ -93,3 +93,39 @@ func backtrack(board [][]int, moveNum, x, y, boardSize int) bool {
 
 	return false
 }
+
+func dijkstra(board [][]int, moveNum, x, y, boardSize int) bool {
+	if moveNum == boardSize*boardSize {
+		return true
+	}
+
+	select {
+	case <-stopSearch:
+		return false
+	default:
+	}
+
+	nextMoves := findNextMoves(x, y, boardSize)
+	rand.Shuffle(len(nextMoves), func(i, j int) {
+		nextMoves[i], nextMoves[j] = nextMoves[j], nextMoves[i]
+	})
+
+	for _, move := range nextMoves {
+		nextX, nextY := move[0], move[1]
+		if board[nextX][nextY] == 0 {
+			boardMutex.Lock()
+			board[nextX][nextY] = moveNum + 1
+			boardMutex.Unlock()
+
+			if backtrack(board, moveNum+1, nextX, nextY, boardSize) {
+				return true
+			}
+
+			boardMutex.Lock()
+			board[nextX][nextY] = 0
+			boardMutex.Unlock()
+		}
+	}
+
+	return false
+}

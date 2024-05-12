@@ -19,3 +19,9 @@ Exemplo de saida do programa:
 Exemplo de movimentação do cavalo no Xadrez:
 
 ![Horse movement](images/horse_movement.jpeg)
+
+## Run
+
+```bash
+./main
+```
