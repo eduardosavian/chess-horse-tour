@@ -6,25 +6,29 @@ import (
   "strconv"
 )
 
+var(
+  boardSize = 8
+  boardArea   = boardSize * boardSize
+  concurrency = 10
+)
+
 func main() {
   fmt.Println("Hello, world")
 
-  if length := len(os.Args);  length < 3 || length > 3 {
-    panic("Format invalid, use go run x y")
-  }
+  if len(os.Args) != 3 {
+		fmt.Println("Usage: go run main.go <startX> <startY>")
+		return
+	}
 
-  x, err := strconv.Atoi(os.Args[1])
-  if err != nil {
-      panic(err)
-  }
+	startX, err := strconv.Atoi(os.Args[1])
+	if err != nil || startX < 0 || startX >= boardSize {
+		fmt.Println("Invalid startX. Must be an integer between 0 and", boardSize-1)
+		return
+	}
 
-  y, err := strconv.Atoi(os.Args[2])
-  if err != nil {
-      panic(err)
-  }
-
-  var chess [8][8]int;
-  chess[x][y] = 1
-
-  print(chess[x][y])
+	startY, err := strconv.Atoi(os.Args[2])
+	if err != nil || startY < 0 || startY >= boardSize {
+		fmt.Println("Invalid startY. Must be an integer between 0 and", boardSize-1)
+		return
+	}
 }
