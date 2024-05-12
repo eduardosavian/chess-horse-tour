@@ -2,8 +2,16 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
+	"sync"
+	"time"
+)
+
+var (
+	foundTour   = make(chan [][]int)
+	waitGroup   sync.WaitGroup
 )
 
 func validateInput(args []string) (int, int, int, int, error) {
@@ -14,7 +22,7 @@ func validateInput(args []string) (int, int, int, int, error) {
 	defaultBoardSize   := 8
 
 	if len(args) < 3 || len(args) > 5 {
-		return 0, 0, 0, 0, fmt.Errorf("Invalid number of arguments. %s", usageMsg)
+		return 0, 0, 0, 0, fmt.Errorf("invalid number of arguments. %s", usageMsg)
 	}
 
 	startX, err := strconv.Atoi(args[1])
@@ -31,7 +39,7 @@ func validateInput(args []string) (int, int, int, int, error) {
 	if len(args) > 3 {
 		concurrency, err = strconv.Atoi(args[3])
 		if err != nil || concurrency <= 0 {
-			return 0, 0, 0, 0, fmt.Errorf("Invalid number of threads. Must be a positive integer.")
+			return 0, 0, 0, 0, fmt.Errorf("invalid number of threads\n must be a positive integer")
 		}
 	}
 
@@ -39,12 +47,37 @@ func validateInput(args []string) (int, int, int, int, error) {
 	if len(args) > 4 {
 		boardSize, err = strconv.Atoi(args[4])
 		if err != nil || boardSize <= 0 {
-			return 0, 0, 0, 0, fmt.Errorf("Invalid board size. Must be a positive integer.")
+			return 0, 0, 0, 0, fmt.Errorf("invalid board size\n must be a positive integer")
 		}
 	}
 
 	return startX, startY, concurrency, boardSize, nil
 }
+
+func isMoveValid(x, y, boardSize int) bool {
+	return x >= 0 && x < boardSize && y >= 0 && y < boardSize
+}
+
+func findNextMoves(x, y, boardSize int) [][]int {
+	possibleMoves := [][]int{
+		{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
+		{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+	}
+
+	validMoves := [][]int{}
+
+	for _, move := range possibleMoves {
+		nextX := x + move[0]
+		nextY := y + move[1]
+
+		if isMoveValid(nextX, nextY, boardSize) {
+			validMoves = append(validMoves, []int{nextX, nextY})
+		}
+	}
+
+	return validMoves
+}
+
 
 func main() {
 	fmt.Println("Hello, world")
@@ -55,8 +88,26 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Valid input: startX=%d, startY=%d, concurrency=%d, boardSize=%d\n", startX, startY, concurrency, boardSize)
+	waitGroup.Add(concurrency)
+	for i := 0; i < concurrency; i++ {
+		go tourWorker(startX, startY, boardSize)
+	}
 
-	boardArea := boardSize * boardSize
+	go func() {
+		waitGroup.Wait()
+		close(foundTour)
+	}()
 
+	for tour := range foundTour {
+		fmt.Println("Found Knight's Tour:")
+		for _, row := range tour {
+			for _, value := range row {
+				fmt.Printf("%3d ", value)
+			}
+			fmt.Println()
+		}
+		return
+	}
+
+	fmt.Println("No valid Knight's Tour found after exhausting all attempts.")
 }
