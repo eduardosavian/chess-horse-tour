@@ -23,5 +23,9 @@ Exemplo de movimentação do cavalo no Xadrez:
 ## Run
 
 ```bash
+go build src/main.go src/gui.go src/methods.go
+```
+
+```bash
 ./main
 ```
