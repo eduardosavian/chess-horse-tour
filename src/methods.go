@@ -162,9 +162,6 @@ func dijkstraBacktrack(board [][]int, moveNum, x, y, boardSize int) bool {
 	default:
 	}
 
-	// Implement Dijkstra's algorithm or a modified search logic here
-	// Adjust how you explore the board and make decisions for the next move
-
 	nextMoves := findNextMoves(x, y, boardSize)
 	rand.Shuffle(len(nextMoves), func(i, j int) {
 		nextMoves[i], nextMoves[j] = nextMoves[j], nextMoves[i]
