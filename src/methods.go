@@ -2,7 +2,19 @@ package main
 
 import (
 	"sort"
+	"encoding/json"
 )
+
+type Board struct {
+	Rows [][]int `json:"board"`
+}
+
+func convertBoardToJSON(board [][]int) ([]byte, error) {
+	data := Board{
+		Rows: board,
+	}
+	return json.MarshalIndent(data, "", "  ")
+}
 
 func isMoveValid(x, y, boardSize int) bool {
 	return x >= 0 && x < boardSize && y >= 0 && y < boardSize
@@ -63,6 +75,6 @@ func backtrack(board [][]int, moveNum, x, y, boardSize int, method string) bool 
 		}
 	}
 
-	board[x][y] = 0 
+	board[x][y] = 0
 	return false
 }
