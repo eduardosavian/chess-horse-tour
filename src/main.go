@@ -26,10 +26,16 @@ func main() {
     input3 := widget.NewEntry()
     input3.SetPlaceHolder("Board Size")
 
+    methodOptions := []string{"Backtracking", "Backtracking with Warnsdorff"}
+    methodSelect := widget.NewSelect(methodOptions, func(selected string) {
+    })
+    methodSelect.SetSelected("Warnsdorff")
+
     submitButton := widget.NewButton("Submit", func() {
         startXStr := input1.Text
         startYStr := input2.Text
         boardSizeStr := input3.Text
+        method := methodSelect.Selected
 
         startX, err := strconv.Atoi(startXStr)
         if err != nil {
@@ -49,13 +55,14 @@ func main() {
             return
         }
 
-        handleSubmission(startX, startY, boardSize, myWindow)
+        handleSubmission(startX, startY, boardSize, method, myWindow)
     })
 
     inputs := container.NewVBox(
         input1,
         input2,
         input3,
+        methodSelect,
         submitButton,
     )
 
@@ -64,13 +71,11 @@ func main() {
     myWindow.ShowAndRun()
 }
 
-func handleSubmission(startX, startY, boardSize int, myWindow fyne.Window) {
+func handleSubmission(startX, startY, boardSize int, method string, myWindow fyne.Window) {
     board := make([][]int, boardSize)
     for i := range board {
         board[i] = make([]int, boardSize)
     }
-
-    method := "warnsdorff"
 
     if !backtrack(board, 1, startX, startY, boardSize, method) {
         dialog.ShowInformation("Knight's Tour", "No valid Knight's Tour found after exhausting all attempts.", myWindow)
@@ -93,7 +98,6 @@ func handleSubmission(startX, startY, boardSize int, myWindow fyne.Window) {
             label.SetText(strconv.Itoa(board[row][col]))
         },
     )
-
 
     tableContainer := container.NewScroll(boardTable)
 
