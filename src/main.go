@@ -34,6 +34,7 @@ func validateInput(args []string) (int, int, int, int, error) {
 		return 0, 0, 0, 0, fmt.Errorf("Invalid startY argument: %v", err)
 	}
 
+
 	boardSize := 8 // default board size
 	if len(args) > 3 {
 		boardSize, err = strconv.Atoi(args[3])
@@ -42,7 +43,15 @@ func validateInput(args []string) (int, int, int, int, error) {
 		}
 	}
 
-	timeout := 5 // default timeout in minutes
+	if startX < 0 || startX >= boardSize {
+		return 0, 0, 0, 0, fmt.Errorf("Invalid startX value, must be between 0 and %d (exclusive)", boardSize)
+	}
+
+	if startY < 0 || startY >= boardSize {
+		return 0, 0, 0, 0, fmt.Errorf("Invalid startY value, must be between 0 and %d (exclusive)", boardSize)
+	}
+
+	timeout := 5
 	if len(args) > 4 {
 		timeout, err = strconv.Atoi(args[4])
 		if err != nil || timeout <= 0 {
