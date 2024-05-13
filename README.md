@@ -29,3 +29,5 @@ go build src/main.go src/gui.go src/methods.go
 ```bash
 ./main
 ```
+
+https://charlotte-sweeney.medium.com/the-knights-tour-finding-some-of-its-solutions-37a52ab7a339

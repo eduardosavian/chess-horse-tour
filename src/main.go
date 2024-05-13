@@ -82,7 +82,10 @@ func main() {
 		os.Exit(0)
 	}()
 
-	if !backtrack(board, 1, startX, startY, boardSize) {
+
+	method := "warnsdorff"
+
+	if !backtrack(board, 1, startX, startY, boardSize, method) {
 		fmt.Println("No valid Knight's Tour found after exhausting all attempts.")
 		return
 	}
