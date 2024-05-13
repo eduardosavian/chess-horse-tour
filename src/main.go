@@ -1,5 +1,7 @@
 package main
 
+// TODO Add concurrency to the program
+
 import (
 	"encoding/json"
 	"fmt"
