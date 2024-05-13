@@ -1,17 +1,21 @@
 package main
 
 import (
+    "errors"
     "fyne.io/fyne/v2/app"
     "fyne.io/fyne/v2/container"
     "fyne.io/fyne/v2/widget"
+    "fyne.io/fyne/v2/dialog"
+    "strconv"
+    "fmt"
 )
 
-func gui() {
+func menu() {
     // Create a new application instance
     myApp := app.New()
 
     // Create a new window
-    myWindow := myApp.NewWindow("Input GUI")
+    myWindow := myApp.NewWindow("Menu")
 
     // Create input widgets
     input1 := widget.NewEntry()
@@ -29,15 +33,51 @@ func gui() {
         },
     }
 
-    // Create a submit button (optional)
+    // Create a submit button
     submitButton := widget.NewButton("Submit", func() {
-        // Handle form submission here
-        // You can access input values using input1.Text(), input2.Text(), etc.
-        // Example:
-        // fmt.Println("Input 1:", input1.Text())
-        // fmt.Println("Input 2:", input2.Text())
-        // fmt.Println("Input 3:", input3.Text())
-        // fmt.Println("Input 4:", input4.Text())
+        // Retrieve input values
+        startXStr := input1.Text
+        startYStr := input2.Text
+        concurrencyStr := input3.Text
+        boardSizeStr := input4.Text
+
+        // Validate input
+        startX, err := strconv.Atoi(startXStr)
+        if err != nil {
+            // Display error message for startX
+            dialog.ShowError(errors.New("Invalid startX: " + err.Error()), myWindow)
+            return
+        }
+
+        startY, err := strconv.Atoi(startYStr)
+        if err != nil {
+            // Display error message for startY
+            dialog.ShowError(errors.New("Invalid startY: " + err.Error()), myWindow)
+            return
+        }
+
+        concurrency, err := strconv.Atoi(concurrencyStr)
+        if err != nil || concurrency <= 0 {
+            // Display error message for concurrency
+            dialog.ShowError(errors.New("Invalid number of threads. Must be a positive integer."), myWindow)
+            return
+        }
+
+        boardSize, err := strconv.Atoi(boardSizeStr)
+        if err != nil || boardSize <= 0 {
+            // Display error message for boardSize
+            dialog.ShowError(errors.New("Invalid board size. Must be a positive integer."), myWindow)
+            return
+        }
+
+        // If all inputs are valid, proceed with the validated values
+        fmt.Println("Validated Input:")
+        fmt.Println("StartX:", startX)
+        fmt.Println("StartY:", startY)
+        fmt.Println("Concurrency:", concurrency)
+        fmt.Println("BoardSize:", boardSize)
+
+        // Now you can proceed with using these validated values for your application logic
     })
 
     // Create a container for the form and button
