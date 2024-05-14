@@ -26,7 +26,7 @@ func main() {
     input3 := widget.NewEntry()
     input3.SetPlaceHolder("Board Size")
 
-    methodOptions := []string{"Backtracking", "Backtracking with Warnsdorff"}
+    methodOptions := []string{"Backtracking", "Warnsdorff"}
     methodSelect := widget.NewSelect(methodOptions, func(selected string) {
     })
     methodSelect.SetSelected("Warnsdorff")

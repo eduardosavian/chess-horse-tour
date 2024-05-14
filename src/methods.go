@@ -42,7 +42,7 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 		}
 	}
 
-	if method == "warnsdorff" {
+	if method == "Warnsdorff" {
 		for i := range validMoves {
 			move := &validMoves[i]
 			move.Priority = len(findNextMoves(move.X, move.Y, boardSize, "default"))

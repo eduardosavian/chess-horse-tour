@@ -1,4 +1,4 @@
-# Horse chess search algorithm
+# Knight's tour algorithms
 
 ## Description
 
@@ -23,11 +23,23 @@ Exemplo de movimentação do cavalo no Xadrez:
 ## Run
 
 ```bash
-go build src/main.go src/gui.go src/methods.go
+go build src/main.go src/methods.go -o kta
 ```
+
+### Linux
 
 ```bash
-./main
+./kta
 ```
 
-https://charlotte-sweeney.medium.com/the-knights-tour-finding-some-of-its-solutions-37a52ab7a339
+### Windows
+
+```ps1
+.\kta.exe
+```
+
+## Bibliographic references
+
+[An efficient algorithm for the Knight’s tour problem - Ian Parberry](https://core.ac.uk/download/pdf/81964499.pdf)
+
+[Knight's tour - Wikipedua](https://en.wikipedia.org/wiki/Knight's_tour)
