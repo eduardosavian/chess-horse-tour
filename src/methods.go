@@ -43,11 +43,22 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 	}
 
 	if method == "Warnsdorff" {
-		for i := range validMoves {
-			move := &validMoves[i]
-			move.Priority = len(findNextMoves(move.X, move.Y, boardSize, "default"))
+		// Pre-calculate number of valid moves for all positions on the board
+		moveCounts := make([][]int, boardSize)
+		for i := range moveCounts {
+			moveCounts[i] = make([]int, boardSize)
+			for j := range moveCounts[i] {
+				moveCounts[i][j] = len(findNextMoves(i, j, boardSize, "default"))
+			}
 		}
 
+		// Assign priorities based on the pre-calculated move counts
+		for i := range validMoves {
+			move := &validMoves[i]
+			move.Priority = moveCounts[move.X][move.Y]
+		}
+
+		// Sort validMoves by Priority (ascending order)
 		sort.Slice(validMoves, func(i, j int) bool {
 			return validMoves[i].Priority < validMoves[j].Priority
 		})
@@ -55,6 +66,7 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 
 	return validMoves
 }
+
 
 
 func backtrack(board [][]int, moveNum, x, y, boardSize int, method string) bool {

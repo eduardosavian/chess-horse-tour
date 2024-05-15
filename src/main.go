@@ -1,105 +1,52 @@
 package main
 
 import (
-    "strconv"
-    "fmt"
-
-    "fyne.io/fyne/v2"
-    "fyne.io/fyne/v2/app"
-    "fyne.io/fyne/v2/container"
-    "fyne.io/fyne/v2/dialog"
-    "fyne.io/fyne/v2/widget"
+	"fmt"
+	"os"
+	"strconv"
 )
 
-var myApp fyne.App
-
 func main() {
-    myApp = app.New()
+	args := os.Args
 
-    myWindow := myApp.NewWindow("Knight's Tour")
-    myWindow.Resize(fyne.NewSize(400, 300))
+	fmt.Println("Program Name:", args[0])
 
-    input1 := widget.NewEntry()
-    input1.SetPlaceHolder("Start X")
-    input2 := widget.NewEntry()
-    input2.SetPlaceHolder("Start Y")
-    input3 := widget.NewEntry()
-    input3.SetPlaceHolder("Board Size")
+	if len(args) < 5 {
+		fmt.Println("Usage: <startX> <startY> <boardSize> <algorithm>")
+		return
+	}
 
-    methodOptions := []string{"Backtracking", "Warnsdorff"}
-    methodSelect := widget.NewSelect(methodOptions, func(selected string) {
-    })
-    methodSelect.SetSelected("Warnsdorff")
+	startX, err := strconv.Atoi(args[1])
+	if err != nil {
+		fmt.Println("Invalid startX:", err)
+		return
+	}
 
-    submitButton := widget.NewButton("Submit", func() {
-        startXStr := input1.Text
-        startYStr := input2.Text
-        boardSizeStr := input3.Text
-        method := methodSelect.Selected
+	startY, err := strconv.Atoi(args[2])
+	if err != nil {
+		fmt.Println("Invalid startY:", err)
+		return
+	}
 
-        startX, err := strconv.Atoi(startXStr)
-        if err != nil {
-            dialog.ShowError(fmt.Errorf("Invalid startX: %s", err.Error()), myWindow)
-            return
-        }
+	boardSize, err := strconv.Atoi(args[3])
+	if err != nil || boardSize <= 0 {
+		fmt.Println("Invalid board size. Must be a positive integer.")
+		return
+	}
 
-        startY, err := strconv.Atoi(startYStr)
-        if err != nil {
-            dialog.ShowError(fmt.Errorf("Invalid startY: %s", err.Error()), myWindow)
-            return
-        }
+	algorithm := args[4]
+	if algorithm != "warnsdorff" && algorithm != "backtrack" {
+		fmt.Println("Invalid algorithm. Must be either 'warnsdorff' or 'backtrack'.")
+		return
+	}
 
-        boardSize, err := strconv.Atoi(boardSizeStr)
-        if err != nil || boardSize <= 0 {
-            dialog.ShowError(fmt.Errorf("Invalid board size. Must be a positive integer."), myWindow)
-            return
-        }
-
-        handleSubmission(startX, startY, boardSize, method, myWindow)
-    })
-
-    inputs := container.NewVBox(
-        input1,
-        input2,
-        input3,
-        methodSelect,
-        submitButton,
-    )
-
-    myWindow.SetContent(inputs)
-
-    myWindow.ShowAndRun()
-}
-
-func handleSubmission(startX, startY, boardSize int, method string, myWindow fyne.Window) {
     board := make([][]int, boardSize)
-    for i := range board {
-        board[i] = make([]int, boardSize)
-    }
+	for i := range board {
+		board[i] = make([]int, boardSize)
+	}
 
-    if !backtrack(board, 1, startX, startY, boardSize, method) {
-        dialog.ShowInformation("Knight's Tour", "No valid Knight's Tour found after exhausting all attempts.", myWindow)
-        return
-    }
-
-    boardTable := widget.NewTable(
-        func() (int, int) {
-            return boardSize, boardSize
-        },
-
-        func() fyne.CanvasObject {
-            return widget.NewLabel("")
-        },
-
-        func(i widget.TableCellID, cell fyne.CanvasObject) {
-            row := i.Row
-            col := i.Col
-            label := cell.(*widget.Label)
-            label.SetText(strconv.Itoa(board[row][col]))
-        },
-    )
-
-    tableContainer := container.NewScroll(boardTable)
-
-    myWindow.SetContent(tableContainer)
+	if !backtrack(board, 1, startX, startY, boardSize, algorithm) {
+		fmt.Println("No valid Knight's Tour found after exhausting all attempts.")
+		return
+	}
 }
