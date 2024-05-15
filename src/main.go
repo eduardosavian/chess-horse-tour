@@ -45,8 +45,18 @@ func main() {
 		board[i] = make([]int, boardSize)
 	}
 
-	if !backtrack(board, 1, startX, startY, boardSize, algorithm) {
-		fmt.Println("No valid Knight's Tour found after exhausting all attempts.")
-		return
+	if backtrackWithWarnsdorff(board, 1, startX, startY, boardSize) {
+		fmt.Println("Knight's tour found:")
+		printBoard(board)
+	} else {
+		fmt.Println("No valid Knight's tour found.")
 	}
+
+    boardJson, err := convertBoardToJSON(board)
+    if err != nil {
+        fmt.Println("Error converting board to JSON:", err)
+        return
+    }
+
+    fmt.Println(string(boardJson))
 }

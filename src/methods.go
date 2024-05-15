@@ -3,6 +3,7 @@ package main
 import (
 	"sort"
 	"encoding/json"
+	"fmt"
 )
 
 type Board struct {
@@ -43,7 +44,6 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 	}
 
 	if method == "Warnsdorff" {
-		// Pre-calculate number of valid moves for all positions on the board
 		moveCounts := make([][]int, boardSize)
 		for i := range moveCounts {
 			moveCounts[i] = make([]int, boardSize)
@@ -52,13 +52,11 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 			}
 		}
 
-		// Assign priorities based on the pre-calculated move counts
 		for i := range validMoves {
 			move := &validMoves[i]
 			move.Priority = moveCounts[move.X][move.Y]
 		}
 
-		// Sort validMoves by Priority (ascending order)
 		sort.Slice(validMoves, func(i, j int) bool {
 			return validMoves[i].Priority < validMoves[j].Priority
 		})
@@ -67,21 +65,45 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 	return validMoves
 }
 
+func prioritizeMoves(x, y, boardSize int) []Move {
+	possibleMoves := [][]int{
+		{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
+		{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+	}
 
+	validMoves := []Move{}
 
-func backtrack(board [][]int, moveNum, x, y, boardSize int, method string) bool {
+	for _, move := range possibleMoves {
+		nextX := x + move[0]
+		nextY := y + move[1]
+
+		if isMoveValid(nextX, nextY, boardSize) {
+			validMoves = append(validMoves, Move{nextX, nextY, 0})
+		}
+	}
+
+	sort.Slice(validMoves, func(i, j int) bool {
+		countI := len(findNextMoves(validMoves[i].X, validMoves[i].Y, boardSize, "default"))
+		countJ := len(findNextMoves(validMoves[j].X, validMoves[j].Y, boardSize, "default"))
+		return countI < countJ
+	})
+
+	return validMoves
+}
+
+func backtrackWithWarnsdorff(board [][]int, moveNum, x, y, boardSize int) bool {
 	board[x][y] = moveNum
 
 	if moveNum == boardSize*boardSize {
 		return true
 	}
 
-	nextMoves := findNextMoves(x, y, boardSize, method)
+	nextMoves := prioritizeMoves(x, y, boardSize)
 
 	for _, move := range nextMoves {
 		nextX, nextY := move.X, move.Y
 		if board[nextX][nextY] == 0 {
-			if backtrack(board, moveNum+1, nextX, nextY, boardSize, method) {
+			if backtrackWithWarnsdorff(board, moveNum+1, nextX, nextY, boardSize) {
 				return true
 			}
 		}
