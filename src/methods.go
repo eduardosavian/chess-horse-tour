@@ -3,7 +3,6 @@ package main
 import (
 	"sort"
 	"encoding/json"
-	"fmt"
 )
 
 type Board struct {
