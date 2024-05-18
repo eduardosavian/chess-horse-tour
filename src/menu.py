@@ -5,7 +5,8 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import seaborn as sns
-import platform  # Import the platform module
+import platform
+import numpy as np
 
 class KnightsTourApp:
     def __init__(self, root):
@@ -16,7 +17,7 @@ class KnightsTourApp:
         self.start_x_var = tk.StringVar(value="0")
         self.start_y_var = tk.StringVar(value="0")
         self.algorithm_var = tk.StringVar(value="backtrack")
-        self.animate_var = BooleanVar()  # Variable to track whether animation is enabled
+        self.animate_var = BooleanVar()
 
         self.create_widgets()
 
@@ -88,20 +89,31 @@ class KnightsTourApp:
         plt.show()
 
     def plot_animated(self, board):
+        max_size = max(len(board), len(board[0]))  # Get the maximum dimension of the board
+        padded_board = np.zeros((max_size, max_size), dtype=int)  # Create a square matrix filled with zeros
+        padded_board[:len(board), :len(board[0])] = board  # Copy the original board into the padded matrix
+
         fig, ax = plt.subplots(figsize=(10, 8))
-        ax.set_title("Knight's Tour Heatmap")
+        ax.set_title("Knight's Tour Animation")
         ax.set_xlabel("X Coordinate")
         ax.set_ylabel("Y Coordinate")
 
         def animate(frame):
             ax.clear()
-            ax.set_title("Knight's Tour Heatmap")
+            ax.set_title("Knight's Tour Animation")
             ax.set_xlabel("X Coordinate")
             ax.set_ylabel("Y Coordinate")
-            sns.heatmap(frame, annot=True, fmt="d", cmap="Reds", cbar=False, square=True, ax=ax)
+            sns.heatmap(padded_board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True, ax=ax)
 
-        ani = animation.FuncAnimation(fig, animate, frames=board, repeat=False)
+            # Calculate current position of the knight based on frame number
+            x, y = frame // len(board[0]), frame % len(board[0])
+            ax.add_patch(plt.Circle((y + 0.5, x + 0.5), 0.4, color='blue', alpha=0.5))  # Draw knight at current position
+
+        num_frames = len(board) * len(board[0])  # Total number of frames
+        ani = animation.FuncAnimation(fig, animate, frames=num_frames, repeat=False)
         plt.show()
+
+
 
 if __name__ == "__main__":
     root = tk.Tk()
