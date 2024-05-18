@@ -48,16 +48,16 @@ class KnightsTourApp:
         start_x = int(self.start_x_var.get())
         start_y = int(self.start_y_var.get())
         algorithm = self.algorithm_var.get()
-        animate = self.animate_var.get()  # Get the value of animate checkbox
+        animate = self.animate_var.get()
 
         if board_size <= 0 or start_x < 0 or start_y < 0 or start_x >= board_size or start_y >= board_size:
             messagebox.showerror("Error", "Invalid board size or start coordinates.")
             return
 
-        if platform.system() == 'Windows':  # Check if the platform is Windows
-            executable = "./libs/knight_tour.exe"  # Use the Windows executable
+        if platform.system() == 'Windows':
+            executable = "./libs/knight_tour.exe"
         else:
-            executable = "./libs/knight_tour"  # Use the default executable
+            executable = "./libs/knight_tour"
 
         result = subprocess.run(
             [executable, str(start_x), str(start_y), str(board_size), algorithm],
@@ -89,9 +89,9 @@ class KnightsTourApp:
         plt.show()
 
     def plot_animated(self, board):
-        max_size = max(len(board), len(board[0]))  # Get the maximum dimension of the board
-        padded_board = np.zeros((max_size, max_size), dtype=int)  # Create a square matrix filled with zeros
-        padded_board[:len(board), :len(board[0])] = board  # Copy the original board into the padded matrix
+        max_size = max(len(board), len(board[0]))
+        padded_board = np.zeros((max_size, max_size), dtype=int)
+        padded_board[:len(board), :len(board[0])] = board
 
         fig, ax = plt.subplots(figsize=(10, 8))
         ax.set_title("Knight's Tour Animation")
@@ -105,13 +105,20 @@ class KnightsTourApp:
             ax.set_ylabel("Y Coordinate")
             sns.heatmap(padded_board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True, ax=ax)
 
-            # Calculate current position of the knight based on frame number
-            x, y = frame // len(board[0]), frame % len(board[0])
-            ax.add_patch(plt.Circle((y + 0.5, x + 0.5), 0.4, color='blue', alpha=0.5))  # Draw knight at current position
+            current_num = frame + 1
+            current_x, current_y = np.where(padded_board == current_num)
 
-        num_frames = len(board) * len(board[0])  # Total number of frames
+            if current_num > 1:
+                previous_num = current_num - 1
+                previous_x, previous_y = np.where(padded_board == previous_num)
+                ax.plot([previous_y + 0.5, current_y + 0.5], [previous_x + 0.5, current_x + 0.5], color='blue', alpha=0.5)
+
+            ax.add_patch(plt.Circle((current_y + 0.5, current_x + 0.5), 0.4, color='blue', alpha=0.5))
+
+        num_frames = len(board) * len(board[0]) 
         ani = animation.FuncAnimation(fig, animate, frames=num_frames, repeat=False)
         plt.show()
+
 
 
 
