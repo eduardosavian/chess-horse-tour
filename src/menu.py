@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import subprocess
 import json
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class KnightsTourApp:
     def __init__(self, root):
@@ -44,26 +46,29 @@ class KnightsTourApp:
         if board_size <= 0 or start_x < 0 or start_y < 0 or start_x >= board_size or start_y >= board_size:
             raise ValueError("Invalid board size or start coordinates.")
 
-        # Call the Go executable
         result = subprocess.run(
             ["./libs/knight_tour", str(start_x), str(start_y), str(board_size), algorithm],
             capture_output=True,
             text=True
-        )
+        ).stdout
 
-        board = json.loads(result.stdout)
-        self.display_board(board)
-        self.display_board_json(board)
+        try:
+            data = json.loads(result)
+            if 'board' not in data:
+                raise ValueError("The JSON does not contain the 'board' key.")
+            board = data['board']
+            if not all(isinstance(row, list) for row in board) or not all(isinstance(num, int) for row in board for num in row):
+                raise ValueError("The 'board' key does not contain a valid 2D list of integers.")
+        except json.JSONDecodeError:
+            raise ValueError("Failed to decode JSON.")
 
-    def display_board(self, board):
-        board_str = "\n".join(" ".join(f"{cell:2}" for cell in row) for row in board)
-        messagebox.showinfo("Knight's Tour", board_str)
 
-    def display_board_json(self, board):
-        board_json = json.dumps(board, indent=2)
-        with open("knights_tour.json", "w") as f:
-            f.write(board_json)
-        messagebox.showinfo("JSON Output", "Board saved as knights_tour.json")
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True)
+        plt.title("Knight's Tour Heatmap")
+        plt.xlabel("X Coordinate")
+        plt.ylabel("Y Coordinate")
+        plt.show()
 
 if __name__ == "__main__":
     root = tk.Tk()

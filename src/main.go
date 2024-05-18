@@ -9,8 +9,6 @@ import (
 func main() {
 	args := os.Args
 
-	fmt.Println("Program Name:", args[0])
-
 	if len(args) < 5 {
 		fmt.Println("Usage: <startX> <startY> <boardSize> <algorithm>")
 		return
