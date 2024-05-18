@@ -76,7 +76,11 @@ class KnightsTourApp:
             if not all(isinstance(row, list) for row in board) or not all(isinstance(num, int) for row in board for num in row):
                 raise ValueError("The 'board' key does not contain a valid 2D list of integers.")
         except json.JSONDecodeError:
-            raise ValueError("Failed to decode JSON.")
+            messagebox.showerror("Error", "No valid Knight's tour found.")
+            return
+        except ValueError as e:
+            messagebox.showerror("Error", str(e))
+            return
 
         if animate:
             self.plot_animated(board)
@@ -122,7 +126,7 @@ class KnightsTourApp:
             ax.add_patch(plt.Circle((current_y + 0.5, current_x + 0.5), 0.4, color='blue', alpha=0.5))
 
         num_frames = len(board) * len(board[0])
-        ani = animation.FuncAnimation(fig, animate, frames=num_frames, repeat=False)
+        ani = animation.FuncAnimation(fig, animate, frames=num_frames, interval=500, repeat=False)
         plt.show()
 
 
