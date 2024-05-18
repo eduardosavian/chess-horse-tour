@@ -8,6 +8,7 @@ import seaborn as sns
 import platform
 import numpy as np
 
+
 class KnightsTourApp:
     def __init__(self, root):
         self.root = root
@@ -20,6 +21,7 @@ class KnightsTourApp:
         self.animate_var = BooleanVar()
 
         self.create_widgets()
+
 
     def create_widgets(self):
         frm = ttk.Frame(self.root, padding=10)
@@ -42,6 +44,7 @@ class KnightsTourApp:
         ttk.Checkbutton(frm, text="Animate", variable=self.animate_var).grid(column=1, row=4, sticky="w")
 
         ttk.Button(frm, text="Find Tour", command=self.find_tour).grid(column=0, row=5, columnspan=2)
+
 
     def find_tour(self):
         board_size = int(self.board_size_var.get())
@@ -80,6 +83,7 @@ class KnightsTourApp:
         else:
             self.plot_static(board)
 
+
     def plot_static(self, board):
         plt.figure(figsize=(10, 8))
         sns.heatmap(board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True)
@@ -87,6 +91,7 @@ class KnightsTourApp:
         plt.xlabel("X Coordinate")
         plt.ylabel("Y Coordinate")
         plt.show()
+
 
     def plot_animated(self, board):
         max_size = max(len(board), len(board[0]))
@@ -97,6 +102,7 @@ class KnightsTourApp:
         ax.set_title("Knight's Tour Animation")
         ax.set_xlabel("X Coordinate")
         ax.set_ylabel("Y Coordinate")
+
 
         def animate(frame):
             ax.clear()
@@ -115,14 +121,13 @@ class KnightsTourApp:
 
             ax.add_patch(plt.Circle((current_y + 0.5, current_x + 0.5), 0.4, color='blue', alpha=0.5))
 
-        num_frames = len(board) * len(board[0]) 
+        num_frames = len(board) * len(board[0])
         ani = animation.FuncAnimation(fig, animate, frames=num_frames, repeat=False)
         plt.show()
-
-
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = KnightsTourApp(root)
     root.mainloop()
+
