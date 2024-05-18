@@ -1,5 +1,4 @@
 # PyInstaller generated files and directories
-
 /build/
 /dist/
 *.spec
