@@ -1,8 +1,9 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, BooleanVar
 import subprocess
 import json
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import seaborn as sns
 import platform  # Import the platform module
 
@@ -15,6 +16,7 @@ class KnightsTourApp:
         self.start_x_var = tk.StringVar(value="0")
         self.start_y_var = tk.StringVar(value="0")
         self.algorithm_var = tk.StringVar(value="backtrack")
+        self.animate_var = BooleanVar()  # Variable to track whether animation is enabled
 
         self.create_widgets()
 
@@ -36,16 +38,20 @@ class KnightsTourApp:
         algorithm_combo.grid(column=1, row=3)
         algorithm_combo.current(0)
 
-        ttk.Button(frm, text="Find Tour", command=self.find_tour).grid(column=0, row=4, columnspan=2)
+        ttk.Checkbutton(frm, text="Animate", variable=self.animate_var).grid(column=1, row=4, sticky="w")
+
+        ttk.Button(frm, text="Find Tour", command=self.find_tour).grid(column=0, row=5, columnspan=2)
 
     def find_tour(self):
         board_size = int(self.board_size_var.get())
         start_x = int(self.start_x_var.get())
         start_y = int(self.start_y_var.get())
         algorithm = self.algorithm_var.get()
+        animate = self.animate_var.get()  # Get the value of animate checkbox
 
         if board_size <= 0 or start_x < 0 or start_y < 0 or start_x >= board_size or start_y >= board_size:
-            raise ValueError("Invalid board size or start coordinates.")
+            messagebox.showerror("Error", "Invalid board size or start coordinates.")
+            return
 
         if platform.system() == 'Windows':  # Check if the platform is Windows
             executable = "./libs/knight_tour.exe"  # Use the Windows executable
@@ -68,11 +74,33 @@ class KnightsTourApp:
         except json.JSONDecodeError:
             raise ValueError("Failed to decode JSON.")
 
+        if animate:
+            self.plot_animated(board)
+        else:
+            self.plot_static(board)
+
+    def plot_static(self, board):
         plt.figure(figsize=(10, 8))
         sns.heatmap(board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True)
         plt.title("Knight's Tour Heatmap")
         plt.xlabel("X Coordinate")
         plt.ylabel("Y Coordinate")
+        plt.show()
+
+    def plot_animated(self, board):
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.set_title("Knight's Tour Heatmap")
+        ax.set_xlabel("X Coordinate")
+        ax.set_ylabel("Y Coordinate")
+
+        def animate(frame):
+            ax.clear()
+            ax.set_title("Knight's Tour Heatmap")
+            ax.set_xlabel("X Coordinate")
+            ax.set_ylabel("Y Coordinate")
+            sns.heatmap(frame, annot=True, fmt="d", cmap="Reds", cbar=False, square=True, ax=ax)
+
+        ani = animation.FuncAnimation(fig, animate, frames=board, repeat=False)
         plt.show()
 
 if __name__ == "__main__":
