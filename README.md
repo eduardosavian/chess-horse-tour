@@ -22,20 +22,22 @@ Exemplo de movimentação do cavalo no Xadrez:
 
 ## Run
 
-```bash
-go build src/main.go src/methods.go -o kta
-```
-
 ### Linux
 
 ```bash
-./kta
+go build -o libs/knight_tour src/main.go src/methods.go
 ```
 
-### Windows
+```bash
+pip install -r requirements.txt
+```
 
-```ps1
-.\kta.exe
+```bash
+pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" src/menu.py
+```
+
+```bash
+./knights_tour.exe
 ```
 
 ## Bibliographic references
