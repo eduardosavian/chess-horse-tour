@@ -29,15 +29,20 @@ go build -o libs/knight_tour src/main.go src/methods.go
 ```
 
 ```bash
+python -m venv venv
+```
+
+```bash
 pip install -r requirements.txt
 ```
 
 ```bash
-pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" src/menu.py
+pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" --hidden-import seaborn src/menu.py
+
 ```
 
 ```bash
-./knights_tour.exe
+.\knights_tour.exe
 ```
 
 ## Bibliographic references
