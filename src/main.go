@@ -33,17 +33,18 @@ func main() {
 	}
 
 	algorithm := args[4]
-	if algorithm != "warnsdorff" && algorithm != "backtrack" {
-		fmt.Println("Invalid algorithm. Must be either 'warnsdorff' or 'backtrack'.")
+	if algorithm != "warnsdorff" && algorithm != "backtrack" && algorithm != "highDegree" && algorithm != "shuffle" {
+		fmt.Println("Invalid algorithm. Must be either 'warnsdorff', 'backtrack', 'highDegree', or 'shuffle'.")
 		return
 	}
+
 
     board := make([][]int, boardSize)
 	for i := range board {
 		board[i] = make([]int, boardSize)
 	}
 
-	if !backtrackWithWarnsdorff(board, 1, startX, startY, boardSize) {
+	if !backtrackWithMethod(board, 1, startX, startY, boardSize, algorithm)  {
 		fmt.Println("No valid Knight's tour found.")
 	}
     boardJson, err := convertBoardToJSON(board)

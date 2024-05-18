@@ -4,6 +4,7 @@ import subprocess
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
+import platform  # Import the platform module
 
 class KnightsTourApp:
     def __init__(self, root):
@@ -31,7 +32,7 @@ class KnightsTourApp:
         ttk.Entry(frm, textvariable=self.start_y_var).grid(column=1, row=2)
 
         ttk.Label(frm, text="Algorithm:").grid(column=0, row=3, sticky="e")
-        algorithm_combo = ttk.Combobox(frm, textvariable=self.algorithm_var, values=["backtrack", "warnsdorff"])
+        algorithm_combo = ttk.Combobox(frm, textvariable=self.algorithm_var, values=["warnsdorff", "backtrack", "shuffle", "highDegree"])
         algorithm_combo.grid(column=1, row=3)
         algorithm_combo.current(0)
 
@@ -46,8 +47,13 @@ class KnightsTourApp:
         if board_size <= 0 or start_x < 0 or start_y < 0 or start_x >= board_size or start_y >= board_size:
             raise ValueError("Invalid board size or start coordinates.")
 
+        if platform.system() == 'Windows':  # Check if the platform is Windows
+            executable = "./libs/knight_tour.exe"  # Use the Windows executable
+        else:
+            executable = "./libs/knight_tour"  # Use the default executable
+
         result = subprocess.run(
-            ["./libs/knight_tour", str(start_x), str(start_y), str(board_size), algorithm],
+            [executable, str(start_x), str(start_y), str(board_size), algorithm],
             capture_output=True,
             text=True
         ).stdout
@@ -61,7 +67,6 @@ class KnightsTourApp:
                 raise ValueError("The 'board' key does not contain a valid 2D list of integers.")
         except json.JSONDecodeError:
             raise ValueError("Failed to decode JSON.")
-
 
         plt.figure(figsize=(10, 8))
         sns.heatmap(board, annot=True, fmt="d", cmap="Reds", cbar=False, square=True)
