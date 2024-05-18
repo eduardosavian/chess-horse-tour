@@ -13,7 +13,7 @@ func convertBoardToJSON(board [][]int) ([]byte, error) {
 	data := Board{
 		Rows: board,
 	}
-	return json.MarshalIndent(data, "", "  ")
+	return json.Marshal(data)
 }
 
 func isMoveValid(x, y, boardSize int) bool {
@@ -25,12 +25,12 @@ type Move struct {
 	Priority int
 }
 
-func findNextMoves(x, y, boardSize int, method string) []Move {
-	possibleMoves := [][]int{
-		{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
-		{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
-	}
+var possibleMoves = [][]int{
+	{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
+	{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+}
 
+func findNextMoves(x, y, boardSize int, method string) []Move {
 	validMoves := []Move{}
 
 	for _, move := range possibleMoves {
@@ -65,11 +65,6 @@ func findNextMoves(x, y, boardSize int, method string) []Move {
 }
 
 func prioritizeMoves(x, y, boardSize int) []Move {
-	possibleMoves := [][]int{
-		{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
-		{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
-	}
-
 	validMoves := []Move{}
 
 	for _, move := range possibleMoves {
