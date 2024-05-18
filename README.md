@@ -22,27 +22,96 @@ Exemplo de movimentação do cavalo no Xadrez:
 
 ## Run
 
-### Linux
+### Windows
+
+#### Go build
 
 ```bash
 go build -o libs/knight_tour src/main.go src/methods.go
 ```
 
+#### Create Python virtual environment
+
 ```bash
 python -m venv venv
 ```
 
+#### Activate Python virtual environment
+
+```bash
+source venv/bin/activate
+```
+
+#### Install Python requirements
+
 ```bash
 pip install -r requirements.txt
 ```
+
+#### Create Python executable
 
 ```bash
 pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" --hidden-import seaborn src/menu.py
 
 ```
 
+#### Move executable
+
+```bash
+mv exec/knights_tour.exe knights_tour.exe
+
+```
+
+#### Run executable
+
 ```bash
 .\knights_tour.exe
+```
+
+### Linux
+
+#### Go build
+
+```bash
+go build -o libs/knight_tour src/main.go src/methods.go
+```
+
+#### Create Python virtual environment
+
+```bash
+python -m venv venv
+```
+
+#### Activate Python virtual environment
+
+```bash
+source venv/bin/activate
+```
+
+#### Install Python requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Create Python executable
+
+```bash
+pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" --hidden-import seaborn src/menu.py
+
+```
+
+#### Move executable
+
+```bash
+mv exec/knights_tour knights_tour
+
+```
+
+#### Run executable
+
+```bash
+./knights_tour
 ```
 
 ## Bibliographic references
