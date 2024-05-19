@@ -17,10 +17,6 @@ func convertBoardToJSON(board [][]int) ([]byte, error) {
 	return json.Marshal(data)
 }
 
-func isMoveValid(x, y, boardSize int) bool {
-	return x >= 0 && x < boardSize && y >= 0 && y < boardSize
-}
-
 type Move struct {
 	X, Y     int
 	Priority int
@@ -29,6 +25,10 @@ type Move struct {
 var possibleMoves = [][]int{
 	{-2, -1}, {-1, -2}, {1, -2}, {2, -1},
 	{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+}
+
+func isMoveValid(x, y, boardSize int) bool {
+	return x >= 0 && x < boardSize && y >= 0 && y < boardSize
 }
 
 func findNextMoves(x, y, boardSize int, board [][]int, searchType string) []Move {

@@ -97,14 +97,12 @@ pip install -r requirements.txt
 
 ```bash
 pyinstaller --onefile --name knights_tour --distpath exec --add-data "libs:libs" --hidden-import seaborn src/menu.py
-
 ```
 
 #### Move executable
 
 ```bash
 mv exec/knights_tour knights_tour
-
 ```
 
 #### Run executable
