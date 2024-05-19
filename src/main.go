@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -44,9 +46,34 @@ func main() {
 		board[i] = make([]int, boardSize)
 	}
 
-	if !backtrackWithMethod(board, 1, startX, startY, boardSize, algorithm)  {
-		fmt.Println("No valid Knight's tour found.")
+	solution := false
+
+	if (algorithm == "warnsdorff") {
+		solution = greedySearch(board, startX, startY, boardSize, algorithm)
 	}
+
+	if(algorithm == "backtrack" || algorithm == "highDegree" || algorithm == "shuffle") {
+		resultChan := make(chan bool)
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+
+		go func() {
+			resultChan <- backtrackSearch(board, 1, startX, startY, boardSize, algorithm)
+		}()
+
+		select {
+		case <-ctx.Done():
+			solution = false
+		case result := <-resultChan:
+			solution = result
+		}
+	}
+
+	if(!solution) {
+		fmt.Println("No Knight's tour solution found:", err)
+        return
+	}
+
     boardJson, err := convertBoardToJSON(board)
     if err != nil {
         fmt.Println("Error converting board to JSON:", err)

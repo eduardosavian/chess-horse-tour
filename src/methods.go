@@ -31,7 +31,7 @@ var possibleMoves = [][]int{
 	{2, 1}, {1, 2}, {-1, 2}, {-2, 1},
 }
 
-func findNextMoves(x, y, boardSize int, board [][]int, method string) []Move {
+func findNextMoves(x, y, boardSize int, board [][]int, searchType string) []Move {
 	validMoves := []Move{}
 
 	for _, move := range possibleMoves {
@@ -43,7 +43,7 @@ func findNextMoves(x, y, boardSize int, board [][]int, method string) []Move {
 		}
 	}
 
-	switch method {
+	switch searchType {
 	case "warnsdorff":
 		for i := range validMoves {
 			move := &validMoves[i]
@@ -69,17 +69,32 @@ func findNextMoves(x, y, boardSize int, board [][]int, method string) []Move {
 	return validMoves
 }
 
-func backtrackWithMethod(board [][]int, moveNum, x, y, boardSize int, method string) bool {
+func greedySearch(board [][]int, x, y, boardSize int, searchType string) bool {
+	board[x][y] = 1
+	for moveNum := 2; moveNum <= boardSize*boardSize; moveNum++ {
+		nextMoves := findNextMoves(x, y, boardSize, board, searchType)
+		if len(nextMoves) == 0 {
+			return false
+		}
+		move := nextMoves[0]
+		x, y = move.X, move.Y
+		board[x][y] = moveNum
+	}
+	return true
+}
+
+func backtrackSearch(board [][]int, moveNum, x, y, boardSize int, backtrackType string) bool {
+
 	board[x][y] = moveNum
 
 	if moveNum == boardSize*boardSize {
 		return true
 	}
 
-	nextMoves := findNextMoves(x, y, boardSize, board, method)
+	nextMoves := findNextMoves(x, y, boardSize, board, backtrackType)
 
 	for _, move := range nextMoves {
-		if backtrackWithMethod(board, moveNum+1, move.X, move.Y, boardSize, method) {
+		if backtrackSearch(board, moveNum+1, move.X, move.Y, boardSize, backtrackType) {
 			return true
 		}
 	}

@@ -118,4 +118,4 @@ mv exec/knights_tour knights_tour
 
 [An efficient algorithm for the Knight’s tour problem - Ian Parberry](https://core.ac.uk/download/pdf/81964499.pdf)
 
-[Knight's tour - Wikipedua](https://en.wikipedia.org/wiki/Knight's_tour)
+[Knight's tour - Wikipedia](https://en.wikipedia.org/wiki/Knight's_tour)
