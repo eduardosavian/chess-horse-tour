@@ -84,7 +84,6 @@ func greedySearch(board [][]int, x, y, boardSize int, searchType string) bool {
 }
 
 func backtrackSearch(board [][]int, moveNum, x, y, boardSize int, backtrackType string) bool {
-
 	board[x][y] = moveNum
 
 	if moveNum == boardSize*boardSize {
