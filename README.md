@@ -1,5 +1,7 @@
 # Knight's tour algorithms
 
+[Vídeo](https://youtu.be/rsfa4lfuNqg)
+
 ## Description
 
 Fazer um programa que resolva o problema da volta do cavalo no tabuleiro de xadrez, utilizando métodos de busca. A equipe deve fundamentar o método ou heurística utilizada e explicar como foi implementado.
